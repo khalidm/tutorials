@@ -1,6 +1,11 @@
-<img src="media/vlsci_logo.jpg" alt="VLSCI logo" style="width:0.5px;"/>
+<img src="media/vlsci_logo.jpg" alt="VLSCI logo" width="164"/>
 
 # Introduction to Variant Calling using Galaxy
+
+# Table of Contents
+1. [Tutorial Overview](#Tutorial-Overview)
+2. [Background](#Background)
+3. [Preparation](#Preparation)
 
 ## Tutorial Overview
 
@@ -16,15 +21,233 @@ Some background reading material - [background]
 
 #### Where is the data in this tutorial from?
 
-The workshop is based on analysis of short read data from the exome of chromosome 22 of a single human individual. There are one million 76bp reads in the dataset, produced on an Illumina GAIIx from exome-enriched DNA. This data was generated as part of the [1000 genome] Genomes project.
+The workshop is based on analysis of short read data from the exome of chromosome 22 of a single human individual. There are one million 76bp reads in the dataset, produced on an Illumina GAIIx from exome-enriched DNA. This data was generated as part of the [1000 genomes] Genomes project.
+
+## Preparation
+
+1. **Make sure you have an instance of Galaxy ready to go.**
+  *  If not - go to our [Melbourne Galaxy] instance.
+2. **Import data for the workshop.**
+  * Download the data to your local computer. [FASTQ file]
+  * This is the raw [FASTQ] file.
+3. **Upload data to Galaxy.**
+  * In the Galaxy tools panel (left), click on *Get Data* and choose *Upload File*.
+  * From *Choose local file* select the downloaded FASTQ file. Select *Type* as **fastqsanger** and click *Start*.
+  * Once the upload status turns *green*, it means the upload is complete. You should now be able to see the file in the Galaxy history panel (right).
+
+```
+Summary:
+So far, we have started a Galaxy instance, got hold of our data and uploaded it to
+the Galaxy instance.
+Now we are ready to perform our analysis.
+```
+
+## Quality Control
+
+The first step is to evaluate the quality of the raw sequence data. If the quality is poor, then adjustments can be made - e.g. trimming the short reads, or adjusting your expectations of the final outcome!
+
+#### View the short read FASTQ file
+1. Click on the eye icon to the top right of the fastq file to view the a snippet of the file.
+2. Note that each read is represented by 4 lines:
+  * read identifier
+  * short read sequence
+  * separator
+  * short read sequence quality scores
+
+```
+e.g.
+identifier:    @61CC3AAXX100125:7:72:14903:20386/1
+read sequence: TTCCTCCTGAGGCCCCACCCACTATACATCATCCCTTCATGGTGAGGGAGACTTCAGCCCTCAATGCCACCTTCAT
+separator:     +
+quality score: ?ACDDEFFHBCHHHHHFHGGCHHDFDIFFIFFIIIIHIGFIIFIEEIIEFEIIHIGFIIIIIGHCIIIFIID?@<6
+```
+
+For more details see [FASTQ].
+
+#### Analyse the quality of the reads in the FASTQ file
+From the Galaxy tools panel, select
+```
+NGS: QC and manipulation > FastQC: Comprehensive QC
+The input FASTQ file will be selected by default. Keep the other defaults and click 'Execute'
+```
+
+Note the batch processing interface of Galaxy:
+
+grey = waiting in queue
+yellow = running
+green = finished
+red = tried to run and failed
+
+Wait for job to be complete.
+
+Click on the eye icon to view the newly generated data (in this case a set of quality metrics for the fastq data).
+Look at the various quality scores. The data looks pretty good - *high Per base sequence quality* (avg. above 30).
+
+*Note that the 'Sequence Duplication Levels' are marked as high. Normally we would run another tool to remove duplicates (technical PCR artifacts) but for the sake of brevity we will omit this step.*
+
+#### Alignment to the reference - (FASTQ to BAM)
+
+The basic process here to map individual reads - from the input sample FASTQ file - to a matching region on the reference genome.
+
+1.  Map/align the reads with the [BWA] tool to Human reference genome 19 (hg19) [UCSC hg19].
+  From the Galaxy tools panel, select
+  ```
+  NGS: Mapping > Map with BWA-MEM [3-5mins]
+
+  From the options:
+  Using reference genome: set to hg19.
+  Single or Paired-end reads: set to Single
+
+  Keep others options as default and click execute
+  ```
+  *Note: This is the longest step in the workshop and will take a few minutes, possibly more depending on how many people are also scheduling mappings*
+
+2.  Sort the BAM file.
+  From the Galaxy tools panel, select
+  ```
+  NGS: SAM Tools > Sort BAM dataset
+
+  From the options:
+  BAM File: set to the output from the alignment BAM file
+  Sort by: Chromosomal coordinates
+
+  Keep others options as default and click execute
+  ```
+
+3.  To examine the output sorted BAM file, we need to first convert it into readable [SAM] format.
+  From the Galaxy tools panel, select
+  ```
+  NGS: SAM Tools > BAM-to-SAM
+
+  From the options:
+  BAM File to Convert: set to the output to the sorted BAM file
+
+  Keep others options as default and click execute
+  ```
+
+4.  Examine the generated Sequence Alignment Map (SAM) file.
+  * Click the eye icon next to the newly generated file
+  * Familiarise yourself with the [SAM] format
+  * Note that some reads have mapped to non-chr22 chromosomes (see column 3).
+
+    This is the essence of alignment algorithms - the aligner does the best it can, but because of compromises in accuracy vs performance and repetitive sequences in the genome, not all the reads will necessarily align to the ‘correct’ sequence or could this be suggesting the presence of a structural variant?
+
+    <img src="media/tips.png" alt="Tip" height="42" width="42"/>
+    ```
+    Tip:
+    Galaxy auto-generates a name for all outputs. Therefore, it is advisable to choose a more meaningful name to these outputs.
+    This can be done as follow:
+    Click on the pencil icon (edit attributes) and change Name e.g. Sample.bam or Sample.sam or Sample.sorted.bam etc.
+    ```
+
+5.  Assessing the alignment data
+
+  *Histogram of genome coverage*
+  From the Galaxy tools panel, select
+  ```
+  BED tools > Create a histogram of genome coverage
+
+  From the options:
+  The BAM: select the sorted BAM file
+
+  Keep others options as default and click execute      
+  ```
+
+  The output format:
+  Output (tab delimited):
+    1. chromosome (or entire genome)
+    2. depth of coverage from features in input file
+    3. number of bases on chromosome (or genome) with depth equal to column 2
+    4. size of chromosome (or entire genome) in base pairs
+    5. fraction of bases on chromosome (or entire genome) with depth equal to column 2
+
+  *Mapping statistics*
+  From the Galaxy tools panel, select
+  ```
+  NGS: SAM Tools > IdxStats
+
+  From the options:
+  The BAM: select the sorted BAM file
+
+  Keep others options as default and click execute      
+  ```
+
+  The output format:
+  Output (tab delimited):
+    1. reference sequence identifier (chromosome)
+    2. reference sequence length
+    3. number of mapped reads
+    4. number of placed but unmapped reads  
+
+  *Check the number of aligned and unaligned reads + other quality metrics*
+  From the Galaxy tools panel, select
+  ```
+  NGS: Sam Tools > Flagstat
+
+  From the options:
+  The BAM: select the sorted BAM file
+
+  Keep others options as default and click execute
+  ```
+
+  Note that in this case the statistics are not very informative. This is because the dataset has been generated for this workshop and much of the noise has been removed (and in fact we just removed a lot more noise in the previous step); also we are using single ended read data rather than paired-end so some of the metrics are not relevant.
+
+6.  Visualize the BAM file.
+  * Download the sorted BAM file
+  From the Galaxy histo panel, select
+  ```
+  Click on the sorted BAM file.
+  Click on the disk > Download dataset
+  Click on the disk > Download bam_index
+
+  Result:
+  This will result in two files being downloaded 1) bam file 2) bam index file
+
+  Open [IGV] browser > Open downloaded BAM file > select chromosome 22
+
+  Can't see anything!
+
+  Zoom in further or type a gene of interest and now you should see aligned reads.
+  ```
+  <img src="media/igv1.jpg" alt="IGV view 1" width="640px"/>
+
+  ```
+  Try looking at region chr22:36,006,744-36,007,406
+  Can you see a few variants?  
+  ```
+  <img src="media/igv_mb.jpg" alt="IGV view 1" width="640px"/>
 
 
+### Calling single nucleotide variations (SNVs)
+
+1.  Generate a pileup file from the aligned reads (sorted bam file previous step 2)
+  From the Galaxy tools panel, select
+  ```  
+  NGS: SAMtools>Generate Pileup
+
+  From the options:
+  Call consensus according to MAQ model = Yes
+
+  Keep others options as default and click execute  
+  ```
+
+  This generates a called 'consensus base' for each chromosomal position.
+  
+  Tell Galaxy that you have just generated a pileup file by explicitly declaring the generated file to be ‘pileup’ format:
+  click the pencil icon, select ‘Datatype’ link and select ‘pileup’ from the ‘New Type:’ drop-down box, then ‘Save’
+  Examine the pileup file and become familiar with the format
+  The pileup file summarises all data from the reads at each genomic region that is covered by at least one read
 
 
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
-
    [background]: <https://www.google.com/url?q=https://docs.google.com/document/pub?id%3D1NfythYcSrkQwldGMrbHRKLRORFFn-WnBm3gOMHwIgmE&sa=D&usg=AFQjCNE7C6wmK6Fiu-_ZJhc0RSBaxFSRbg>
    [1000 genomes]: <http://www.1000genomes.org/>
+   [Melbourne Galaxy]: <http://galaxy-mel.genome.edu.au/galaxy>
+   [FASTQ file]: <https://www.google.com/url?q=https://swift.rc.nectar.org.au:8888/v1/AUTH_a3929895f9e94089ad042c9900e1ee82/VariantDet_BASIC/NA12878.GAIIx.exome_chr22.1E6reads.76bp.fastq&sa=D&usg=AFQjCNFuof3Ud3BzcKkW54yL-1ySLIXPNg>
+   [FASTQ]: <https://en.wikipedia.org/wiki/FASTQ_format>
+   [BWA]: <http://bio-bwa.sourceforge.net/>
+   [UCSC hg19]: <http://genome.ucsc.edu/cgi-bin/hgTracks>
+   [SAM]: <https://samtools.github.io/hts-specs/SAMv1.pdf>
