@@ -11,8 +11,10 @@ The tutorial is designed to introduce the tools, datatypes and workflow of varia
 ## Background
 
 Read the background to the workshop - [background]
+
 Where is the data in this tutorial from?
-The workshop is based on analysis of short read data from the exome of chromosome 22 of a single human individual. There are one million 76bp reads in the dataset, produced on an Illumina GAIIx from exome-enriched DNA. This data was generated as part of the 1000 Genomes project: http://www.1000genomes.org/
+
+The workshop is based on analysis of short read data from the exome of chromosome 22 of a single human individual. There are one million 76bp reads in the dataset, produced on an Illumina GAIIx from exome-enriched DNA. This data was generated as part of the 1000[1000g] Genomes project.
 
 
 
@@ -23,3 +25,4 @@ The workshop is based on analysis of short read data from the exome of chromosom
 
 
    [background]: <https://www.google.com/url?q=https://docs.google.com/document/pub?id%3D1NfythYcSrkQwldGMrbHRKLRORFFn-WnBm3gOMHwIgmE&sa=D&usg=AFQjCNE7C6wmK6Fiu-_ZJhc0RSBaxFSRbg>
+   [1000g]: <http://www.1000genomes.org/>
