@@ -232,13 +232,17 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   ```
 
   This generates a called 'consensus base' for each chromosomal position.
-  
-  Tell Galaxy that you have just generated a pileup file by explicitly declaring the generated file to be ‘pileup’ format:
-  click the pencil icon, select ‘Datatype’ link and select ‘pileup’ from the ‘New Type:’ drop-down box, then ‘Save’
-  Examine the pileup file and become familiar with the format
-  The pileup file summarises all data from the reads at each genomic region that is covered by at least one read
 
+  <img src="media/tips.png" alt="Tip" height="42" width="42"/>
+  ```
+  Tip:
+  For each output file, Galaxy tries to assign a datatype attribute to every file.
+  For the above step, click on the pencil icon (edit attributes) and choose Datatype link from the top column.
+  Although it is a tabular file, for downstream processing we want tell Galaxy that this is a *pileup* file.
 
+  From the drop-down, select Pileup and click save.  
+  ```
+  **The pileup file summarises all data from the reads at each genomic region that is covered by at least one read.**
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
