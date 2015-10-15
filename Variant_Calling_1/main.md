@@ -244,6 +244,8 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   ```
   **The pileup file summarises all data from the reads at each genomic region that is covered by at least one read.**
 
+  Get familiar with the [Pileup] format.
+
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
@@ -255,3 +257,4 @@ The basic process here to map individual reads - from the input sample FASTQ fil
    [BWA]: <http://bio-bwa.sourceforge.net/>
    [UCSC hg19]: <http://genome.ucsc.edu/cgi-bin/hgTracks>
    [SAM]: <https://samtools.github.io/hts-specs/SAMv1.pdf>
+   [Pileup]: <https://www.google.com/url?q=https://docs.google.com/document/pub?id%3D1fouC29Lq0CXxQQCpuojrR5RXbdzMdxRf8ZID01XYNqI%23h.931a12a1a6ce&sa=D&usg=AFQjCNE-_ur_EqlMdu0A35ylXxlrNTlktA>
