@@ -132,13 +132,12 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
     This is the essence of alignment algorithms - the aligner does the best it can, but because of compromises in accuracy vs performance and repetitive sequences in the genome, not all the reads will necessarily align to the ‘correct’ sequence or could this be suggesting the presence of a structural variant?
 
-    <img src="media/tips.png" alt="Tip" height="42" width="42"/>
-    ```
-    Tip:
-    Galaxy auto-generates a name for all outputs. Therefore, it is advisable to choose a more meaningful name to these outputs.
-    This can be done as follow:
-    Click on the pencil icon (edit attributes) and change Name e.g. Sample.bam or Sample.sam or Sample.sorted.bam etc.
-    ```
+  >  <img src="media/tips.png" alt="Tip" height="42" width="42"/>
+  Tip:
+  Galaxy auto-generates a name for all outputs. Therefore, it is advisable to choose a more meaningful name to these outputs.
+  This can be done as follow:
+  Click on the pencil icon (edit attributes) and change Name e.g. Sample.bam or Sample.sam or Sample.sorted.bam etc.
+
 
 5.  Assessing the alignment data
 
@@ -220,31 +219,74 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
 ### Calling single nucleotide variations (SNVs)
 
-1.  Generate a pileup file from the aligned reads (sorted bam file previous step 2)
+1.  Generate a pileup file from the aligned reads (sorted bam file previous step 2). A pileup is essentially a column wise representation of the aligned read - at the base level - to the reference. The pileup file summarises all data from the reads at each genomic region that is covered by at least one read.
+
   From the Galaxy tools panel, select
   ```  
   NGS: SAMtools>Generate Pileup
 
   From the options:
   Call consensus according to MAQ model = Yes
+  This generates a called 'consensus base' for each chromosomal position.
 
   Keep others options as default and click execute  
   ```
 
-  This generates a called 'consensus base' for each chromosomal position.
+  For each output file, Galaxy tries to assign a datatype attribute to every file. For each output file, Galaxy tries to assign a datatype attribute to every file.
 
-  <img src="media/tips.png" alt="Tip" height="42" width="42"/>
+
   ```
-  Tip:
-  For each output file, Galaxy tries to assign a datatype attribute to every file.
-  For the above step, click on the pencil icon (edit attributes) and choose Datatype link from the top column.
-  Although it is a tabular file, for downstream processing we want tell Galaxy that this is a *pileup* file.
+  Firstly, remember to rename output files to something more meaningful e.g. the workflow stage
+  For the above output, click on the pencil icon (edit attributes) and choose Datatype link from the top column.
+  Although it is a tabular file, for downstream processing we want to tell Galaxy that this is a *pileup* file.
 
-  From the drop-down, select Pileup and click save.  
+  From the drop-down, select Pileup and click save.
+
   ```
-  **The pileup file summarises all data from the reads at each genomic region that is covered by at least one read.**
 
-  Get familiar with the [Pileup] format.
+  >  <img src="media/tips.png" alt="Tip" height="42" width="42"/>
+  >  Tip:
+  >Get familiar with the [Pileup] format.
+  >* 1. chromosome
+  >* 2. position
+  >* 3. current reference base
+  >* 4. consensus base from the mapped reads
+  >* 5. consensus quality
+  >* 6. SNP quality
+  >* 7. maximum mapping quality
+  >* 8. coverage
+  >* 9. bases within reads
+  >* 10. quality values
+  >* Further on (9):
+  >   * Each character represents one of the following: the longer this string, higher the coverage
+  >   * . = match on forward strand for that base
+  >   * , = match on reverse strand
+  >   * ACGTN = mismatch on forward
+  >   * acgtn = mismatch on reverse
+  >   * +[0-9]+[ACGTNacgtn]+' = insertion between this reference position and the next
+  >   * -[0-9]+[ACGTNacgtn]+' = deletion between this reference position and the next
+  >   * ^ = start of read
+  >   * $ = end of read
+  >   * BaseQualities = one character per base in ReadBases, ASCII encoded Phred scores
+
+2.  Filtering pileup to get a list of SNPs
+  The pileup from the above steps described *all* aligned positions. For the purpose of calling SNPs, we are after:
+    * aligned positions where the consensus base is difference from the reference base
+    * the different consensus base is covered by at least e.g. 10 reads    
+    * removing poor quality bases
+
+    From the Galaxy tools panel, select
+    ```
+    NGS: SAM Tools>Filter Pileup
+
+    From the options:
+    which contains = Pileup with ten columns (with consensus)
+    Do not report positions with coverage lower than = 10
+    Convert coordinates to intervals = Yes  
+
+    Keep others options as default and click execute    
+    ```
+
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
