@@ -2,12 +2,18 @@
 
 # Introduction to Variant Calling using Galaxy
 
+<!-- toc -->
 # Table of Contents
-1. [Tutorial Overview](#Tutorial-Overview)
-2. [Background](#Background)
-3. [Preparation](#Preparation)
+1. [Tutorial Overview](#tutorial-overview)
+2. [Background](#background)
+3. [Preparation](#preparation)
+4. [Quality Control](#quality-control)
+5. [Alignment to the reference - (FASTQ to BAM)](#alignment-to-the-reference---fastq-to-bam))
+6. [Calling single nucleotide variations(SNVs)](#calling-single-nucleotide-variations-snvs)
+7. [Calling small insertions and deltetions](#calling-small-insertions-and-deletions-indels)
 
-## Tutorial Overview
+
+## 1. Tutorial Overview
 
 In this tutorial we cover the concepts of detecting small variants (SNVs and indels) in human genomic DNA using a small set of reads from chromosome 22.
 
@@ -15,7 +21,7 @@ Note:
 
 The tutorial is designed to introduce the tools, datatypes and workflow of variation detection. We filter the variations manually to understand what is actually happening in variant calling. In practice the datasets would be much larger and you would use more sophisticated tools to call, annotate and filter variants.
 
-## Background
+## 2. Background
 
 Some background reading material - [background]
 
@@ -23,7 +29,7 @@ Some background reading material - [background]
 
 The workshop is based on analysis of short read data from the exome of chromosome 22 of a single human individual. There are one million 76bp reads in the dataset, produced on an Illumina GAIIx from exome-enriched DNA. This data was generated as part of the [1000 genomes] Genomes project.
 
-## Preparation
+## 3. Preparation
 
 1. **Make sure you have an instance of Galaxy ready to go.**
   *  If not - go to our [Melbourne Galaxy] instance.
@@ -42,11 +48,11 @@ the Galaxy instance.
 Now we are ready to perform our analysis.
 ```
 
-## Quality Control
+## 4. Quality Control
 
 The first step is to evaluate the quality of the raw sequence data. If the quality is poor, then adjustments can be made - e.g. trimming the short reads, or adjusting your expectations of the final outcome!
 
-#### View the short read FASTQ file
+#### Take a look at a FASTQ file
 1. Click on the eye icon to the top right of the fastq file to view the a snippet of the file.
 2. Note that each read is represented by 4 lines:
   * read identifier
@@ -64,7 +70,7 @@ quality score: ?ACDDEFFHBCHHHHHFHGGCHHDFDIFFIFFIIIIHIGFIIFIEEIIEFEIIHIGFIIIIIGHC
 
 For more details see [FASTQ].
 
-#### Analyse the quality of the reads in the FASTQ file
+#### Assessing read quality from the FASTQ files
 From the Galaxy tools panel, select
 ```
 NGS: QC and manipulation > FastQC: Comprehensive QC
@@ -80,12 +86,12 @@ red = tried to run and failed
 
 Wait for job to be complete.
 
-Click on the eye icon to view the newly generated data (in this case a set of quality metrics for the fastq data).
+Click on the eye icon to view the newly generated data (in this case a set of quality metrics for the FASTQ data).
 Look at the various quality scores. The data looks pretty good - *high Per base sequence quality* (avg. above 30).
 
 *Note that the 'Sequence Duplication Levels' are marked as high. Normally we would run another tool to remove duplicates (technical PCR artifacts) but for the sake of brevity we will omit this step.*
 
-#### Alignment to the reference - (FASTQ to BAM)
+## 5. Alignment to the reference - (FASTQ to BAM)
 
 The basic process here to map individual reads - from the input sample FASTQ file - to a matching region on the reference genome.
 
@@ -217,7 +223,7 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   <img src="media/igv_mb.jpg" alt="IGV view 1" width="640px"/>
 
 
-### Calling single nucleotide variations (SNVs)
+## 6. Calling single nucleotide variations (SNVs)
 
 1.  Generate a pileup file from the aligned reads (sorted bam file previous step 2). A pileup is essentially a column wise representation of the aligned read - at the base level - to the reference. The pileup file summarises all data from the reads at each genomic region that is covered by at least one read.
 
@@ -349,7 +355,8 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   * Now zoom into the region chr22:35,947,503-35,947,667.
     > Is this a homozygous variant?
 
-### Calling small insertions and deletions (indels)
+## 7. Calling small insertions and deletions (indels)
+
 1.  Generate a pileup file from the aligned reads containing only indels.
   From the Galaxy tools panel, select
   ```
@@ -405,13 +412,7 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   <img src="media/igv_indel.jpg" alt="IGV indel" width="640px"/>
 
   -------
-
-
-
-
-
-
-
+----------------------------------------------
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
