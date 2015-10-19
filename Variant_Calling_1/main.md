@@ -1,16 +1,20 @@
-<img src="media/vlsci_logo.jpg" alt="VLSCI logo" width="164"/>
+<p>
+<img src="media/vlsci_logo.jpg" alt="VLSCI logo" align="left" width="164"/>
+<img src="media/gvl_logo.jpg" alt="GVL logo" align="right" width="112"/>
+</p>
+<p></p>
 
 # Introduction to Variant Calling using Galaxy
 
 <!-- toc -->
 # Table of Contents
-1. [Tutorial Overview](#tutorial-overview)
-2. [Background](#background)
-3. [Preparation](#preparation)
-4. [Quality Control](#quality-control)
-5. [Alignment to the reference - (FASTQ to BAM)](#alignment-to-the-reference---fastq-to-bam))
-6. [Calling single nucleotide variations(SNVs)](#calling-single-nucleotide-variations-snvs)
-7. [Calling small insertions and deltetions](#calling-small-insertions-and-deletions-indels)
+1. [Tutorial Overview](#1-tutorial-overview)
+2. [Background](#2-background)
+3. [Preparation](#3-preparation)
+4. [Quality Control](#4-quality-control)
+5. [Alignment to the reference - (FASTQ to BAM)](#5-alignment-to-the-reference---fastq-to-bam))
+6. [Calling single nucleotide variations(SNVs)](#6-calling-single-nucleotide-variations-snvs)
+7. [Calling small insertions and deletetions](#7-calling-small-insertions-and-deletions-indels)
 
 
 ## 1. Tutorial Overview
@@ -42,10 +46,12 @@ The workshop is based on analysis of short read data from the exome of chromosom
   * Once the upload status turns *green*, it means the upload is complete. You should now be able to see the file in the Galaxy history panel (right).
 
 ```
+
 Summary:
 So far, we have started a Galaxy instance, got hold of our data and uploaded it to
 the Galaxy instance.
 Now we are ready to perform our analysis.
+
 ```
 
 ## 4. Quality Control
@@ -61,11 +67,13 @@ The first step is to evaluate the quality of the raw sequence data. If the quali
   * short read sequence quality scores
 
 ```
+
 e.g.
 identifier:    @61CC3AAXX100125:7:72:14903:20386/1
 read sequence: TTCCTCCTGAGGCCCCACCCACTATACATCATCCCTTCATGGTGAGGGAGACTTCAGCCCTCAATGCCACCTTCAT
 separator:     +
 quality score: ?ACDDEFFHBCHHHHHFHGGCHHDFDIFFIFFIIIIHIGFIIFIEEIIEFEIIHIGFIIIIIGHCIIIFIID?@<6
+
 ```
 
 For more details see [FASTQ].
@@ -73,8 +81,11 @@ For more details see [FASTQ].
 #### Assessing read quality from the FASTQ files
 From the Galaxy tools panel, select
 ```
+
 NGS: QC and manipulation > FastQC: Comprehensive QC
+
 The input FASTQ file will be selected by default. Keep the other defaults and click 'Execute'
+
 ```
 
 Note the batch processing interface of Galaxy:
@@ -168,13 +179,14 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
   *Mapping statistics*
   From the Galaxy tools panel, select
+
   ```
   NGS: SAM Tools > IdxStats
 
   From the options:
   The BAM: select the sorted BAM file
 
-  keep other options as default and click execute      
+  keep other options as default and click execute  
   ```
 
   The output format:
@@ -186,24 +198,29 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
   *Check the number of aligned and unaligned reads + other quality metrics*
   From the Galaxy tools panel, select
+
   ```
+
   NGS: Sam Tools > Flagstat
 
   From the options:
   The BAM: select the sorted BAM file
 
   keep other options as default and click execute
+
   ```
 
   Note that in this case the statistics are not very informative. This is because the dataset has been generated for this workshop and much of the noise has been removed (and in fact we just removed a lot more noise in the previous step); also we are using single ended read data rather than paired-end so some of the metrics are not relevant.
 
 6.  Visualize the BAM file.
   * Download the sorted BAM file
-  From the Galaxy histo panel, select
+  From the Galaxy history panel, select
+
   ```
+
   Click on the sorted BAM file.
-  Click on the disk > Download dataset
-  Click on the disk > Download bam_index
+  Click on the disk icon > Download dataset
+  Click on the disk icon > Download bam_index
 
   Result:
   This will result in two files being downloaded 1) bam file 2) bam index file
@@ -213,12 +230,15 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   Can't see anything!
 
   Zoom in further or type a gene of interest and now you should see aligned reads.
+
   ```
   <img src="media/igv1.jpg" alt="IGV view 1" width="640px"/>
 
   ```
+
   Try looking at region chr22:36,006,744-36,007,406
   Can you see a few variants?  
+
   ```
   <img src="media/igv_mb.jpg" alt="IGV view 1" width="640px"/>
 
@@ -229,6 +249,7 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
   From the Galaxy tools panel, select
   ```  
+
   NGS: SAMtools>Generate Pileup
 
   From the options:
@@ -236,12 +257,14 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   This generates a called 'consensus base' for each chromosomal position.
 
   keep other options as default and click execute  
+
   ```
 
   For each output file, Galaxy tries to assign a datatype attribute to every file. For each output file, Galaxy tries to assign a datatype attribute to every file.
 
 
   ```
+
   Firstly, remember to rename output files to something more meaningful e.g. the workflow stage
   For the above output, click on the pencil icon (edit attributes) and choose Datatype link from the top column.
   Although it is a tabular file, for downstream processing we want to tell Galaxy that this is a *pileup* file.
@@ -307,12 +330,14 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
   From the Galaxy tools panel, select
   ```
+
   Filter and Sort > Filter
 
   From the options:
   With following condition = c7>50 (filter on SNV quality (column 7)). This is a score generated by a combination of reads and base quality etc.
 
   keep other options as default and click execute    
+
   ```
 
   Note that the number of SNVs has gone down by ~95%, and we're down to 896, which is not too far off the expected number.
@@ -359,7 +384,9 @@ The basic process here to map individual reads - from the input sample FASTQ fil
 
 1.  Generate a pileup file from the aligned reads containing only indels.
   From the Galaxy tools panel, select
+
   ```
+
   NGS: SAM Tools > Generate pileup
 
   From the options:
@@ -367,8 +394,8 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   Whether or not to print only output pileup lines containing indels = Print only lines containing indels
   Call consensus according to MAQ model? = yes
 
+  Keep other options as default and click execute    
 
-  keep other options as default and click execute    
   ```
 
 2.  Filtering pileup to get a list of indels
@@ -378,13 +405,16 @@ The basic process here to map individual reads - from the input sample FASTQ fil
     * the indel is covered by at least e.g. 10 reads (column 11)
 
   From the Galaxy tools panel, select
+
   ```
+
   Filter and Sort > Filter
 
   From the options:
   With following condition =  c7>50 and c11>20
 
   keep other options as default and click execute
+
   ```
 
   This filtering strategy reduces the call set by 83% and we are left with **~700 small indels**.
@@ -405,14 +435,15 @@ The basic process here to map individual reads - from the input sample FASTQ fil
   Download this file and open it using IGV genome browser.
 
   ```
+
   Try looking at region chr22:31,854,409-31,854,460
   Can you see any indels?
   Also try looking at other regions by zooming out.  
+
   ```
   <img src="media/igv_indel.jpg" alt="IGV indel" width="640px"/>
 
-  -------
-----------------------------------------------
+  ----------------------------------------------
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does it's job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
